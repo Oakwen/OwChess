@@ -1,6 +1,6 @@
 ## The Cerebrum library
 
-![Logo](/v2.0/logo.png)
+![Logo](/logo.png)
 
 The **Cerebrum library** can be used to easily train a "[NNUE](https://www.chessprogramming.org/NNUE)-like" neural network for a chess engine. It was originally designed and built for the [Orion UCI chess engine](https://www.orionchess.com/).
 
