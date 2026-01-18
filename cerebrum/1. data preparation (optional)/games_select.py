@@ -49,110 +49,120 @@ SEED = 21052014
 def generator():
     while True:
         yield
-    #end while
-#end def
+    # end while
+
+
+# end def
 
 
 def read_games():
     files = []
-    
-    for file in os.scandir('./pgn'):
-        if file.name.lower().endswith('.pgn'):
-            files.append(f'./pgn/{file.name}')
-        #end if
-    #end for
-    
+
+    for file in os.scandir("./pgn"):
+        if file.name.lower().endswith(".pgn"):
+            files.append(f"./pgn/{file.name}")
+        # end if
+    # end for
+
     for pgn_file in sorted(files):
-        with open(pgn_file, 'rt') as file:
+        # open PGN files using UTF-8 and replace undecodable bytes to avoid
+        # UnicodeDecodeError on Windows with non-gbk files
+        with open(pgn_file, "rt", encoding="utf-8", errors="replace") as file:
             lines = []
-            
+
             for line in file:
-                if line.startswith('[Event ') and len(lines):
+                if line.startswith("[Event ") and len(lines):
                     yield lines
                     lines = []
                 else:
                     lines.append(line)
-                #end if
-            #end for
-        #end with
-        
+                # end if
+            # end for
+        # end with
+
         if len(lines):
             yield lines
-        #end if
-    #end for
-    
+        # end if
+    # end for
+
     return None
-#end def
+
+
+# end def
+
 
 def main():
-    print('STEP 1: SELECT GAMES...')
+    print("STEP 1: SELECT GAMES...")
     print()
-    
+
     random.seed(SEED)
-    
+
     mates = 0
     errors = 0
-    
+
     draws = []
-    
-    with open('games.pgn', 'wt') as dst_file:
+
+    # write output as UTF-8 to preserve non-ascii characters
+    with open("games.pgn", "wt", encoding="utf-8", errors="replace") as dst_file:
         games = read_games()
-        
+
         for game in tqdm.tqdm(games, unit_scale=True):
             result = None
             plycount = None
-            
+
             for line in game:
                 if line.startswith('[Result "'):
                     result = line.split('"')[1]
-                #end if
+                # end if
                 if line.startswith('[PlyCount "'):
                     plycount = line.split('"')[1]
-                #end if
-            #end for
-            
+                # end if
+            # end for
+
             if result is None or plycount is None:
-                #print(game)
+                # print(game)
                 errors += 1
                 continue
-            #end if
-            
-            if result not in ['1-0', '0-1', '1/2-1/2']:
-                #print(game)
+            # end if
+
+            if result not in ["1-0", "0-1", "1/2-1/2"]:
+                # print(game)
                 errors += 1
                 continue
-            #end if
-            
+            # end if
+
             if int(plycount) > MAX_PLIES:
                 continue
-            #end if
-            
-            game = ''.join(game)
-            
-            if result == '1/2-1/2':
+            # end if
+
+            game = "".join(game)
+
+            if result == "1/2-1/2":
                 draws.append(game)
             else:
                 mates += 1
                 dst_file.write(game)
-                dst_file.write('\n')
-            #end if
-        #end for
-        
+                dst_file.write("\n")
+            # end if
+        # end for
+
         random.shuffle(draws)
         index = int(mates / 2)
         draws = draws[:index]
-        
-        print(mates, 'mate(s)', '+', len(draws), 'draw(s)', '+', errors, 'error(s)')
-        
+
+        print(mates, "mate(s)", "+", len(draws), "draw(s)", "+", errors, "error(s)")
+
         for game in draws:
             dst_file.write(game)
-            dst_file.write('\n')
-        #end for
-        
-        print()
-    #end with
-#end def
+            dst_file.write("\n")
+        # end for
 
-if __name__ =='__main__':
+        print()
+    # end with
+
+
+# end def
+
+if __name__ == "__main__":
     main()
-#end if
+# end if
