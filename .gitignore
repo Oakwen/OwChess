@@ -1,3 +1,12 @@
+# OwChess Python.gitignore
+cerebrum/1. data preparation (optional)/bonus/
+cerebrum/1. data preparation (optional)/pgn/
+cerebrum/1. data preparation (optional)/set
+cerebrum/1. data preparation (optional)/txt
+cerebrum/1. data preparation (optional)/games.pgn
+cerebrum/1. data preparation (optional)/positions.txt
+cerebrum/1. data preparation (optional)/positions-shuffled.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
